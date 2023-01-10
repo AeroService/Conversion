@@ -14,5 +14,18 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+import java.lang.reflect.Type;
+import java.util.Currency;
+import org.jetbrains.annotations.NotNull;
+
+public class StringToCurrencyConverter implements Converter<String, Currency> {
+
+	@Override
+	public @NotNull Currency convert(@NotNull String source, @NotNull Type sourceType, @NotNull Type targetType) {
+        String trimmed = source.trim();
+
+		return Currency.getInstance(trimmed);
+	}
+}

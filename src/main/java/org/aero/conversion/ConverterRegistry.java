@@ -14,5 +14,18 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion;
 
+import org.aero.conversion.converter.ConditionalConverter;
+import org.aero.conversion.converter.Converter;
+import org.aero.conversion.converter.ConverterFactory;
+
+public interface ConverterRegistry {
+
+    <U, V> void register(Class<? extends U> source, Class<V> target, Converter<U, V> converter);
+
+    void register(ConditionalConverter<?, ?> converter);
+
+    <U, V> void register(Class<? extends U> source, Class<V> target, ConverterFactory<?, ?> converterFactory);
+
+}

@@ -14,5 +14,25 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.util;
 
+import org.conelux.common.validate.Check;
+import org.jetbrains.annotations.NotNull;
+
+public final class ConversionUtil {
+
+    private ConversionUtil() {
+
+    }
+
+    public static Class<?> getEnumType(@NotNull Class<?> targetType) {
+        Class<?> enumType = targetType;
+        while (enumType != null && !enumType.isEnum()) {
+            enumType = enumType.getSuperclass();
+        }
+
+        Check.notNull(enumType, "The target type " + targetType.getName() + " does not refer to an enum");
+        return enumType;
+    }
+
+}

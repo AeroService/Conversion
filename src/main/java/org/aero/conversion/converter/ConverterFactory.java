@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+@FunctionalInterface
+public interface ConverterFactory<T, U> {
+
+    <V extends U> Converter<T, V> create(Class<V> type);
+
+}

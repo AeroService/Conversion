@@ -14,5 +14,17 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+import java.lang.reflect.Type;
+import org.jetbrains.annotations.NotNull;
+
+@SuppressWarnings("rawtypes") //TODO: Change
+public class EnumToIntegerConverter implements Converter<Enum, Integer> {
+
+    @Override
+    public @NotNull Integer convert(@NotNull Enum source, @NotNull Type sourceType,
+        @NotNull Type targetType) {
+        return source.ordinal();
+    }
+}

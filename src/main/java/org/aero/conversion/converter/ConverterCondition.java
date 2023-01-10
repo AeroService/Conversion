@@ -14,5 +14,12 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+import java.lang.reflect.Type;
+
+public interface ConverterCondition {
+
+    boolean matches(Type sourceType, Type targetType);
+
+}

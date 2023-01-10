@@ -14,5 +14,15 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+import java.lang.reflect.Type;
+import org.aero.conversion.exception.ConversionException;
+import org.jetbrains.annotations.NotNull;
+
+@FunctionalInterface
+public interface Converter<T, U> {
+
+    @NotNull U convert(@NotNull T obj, @NotNull Type sourceType, @NotNull Type targetType) throws ConversionException;
+
+}

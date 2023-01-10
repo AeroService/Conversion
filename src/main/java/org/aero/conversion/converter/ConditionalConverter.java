@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+public interface ConditionalConverter<T, U> extends Converter<T, U>, ConverterCondition {
+
+}

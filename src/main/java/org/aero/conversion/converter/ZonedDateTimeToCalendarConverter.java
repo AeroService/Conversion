@@ -14,5 +14,19 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.converter;
 
+import java.lang.reflect.Type;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import org.jetbrains.annotations.NotNull;
+
+public class ZonedDateTimeToCalendarConverter implements Converter<ZonedDateTime, Calendar> {
+
+    @Override
+    public @NotNull Calendar convert(@NotNull ZonedDateTime source, @NotNull Type sourceType,
+        @NotNull Type targetType) {
+        return GregorianCalendar.from(source);
+    }
+}

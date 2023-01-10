@@ -14,5 +14,14 @@
  * limitations under the License.
  */
 
-rootProject.name = "Conversion"
+package org.aero.conversion.exception;
 
+import java.lang.reflect.Type;
+
+public class ConverterNotFoundException extends ConversionException {
+
+    public ConverterNotFoundException(Type sourceType, Type targetType) {
+        super("Failed to find converter which converts the source value of type " + sourceType.getTypeName()
+            + " to target value of type " + targetType.getTypeName());
+    }
+}
