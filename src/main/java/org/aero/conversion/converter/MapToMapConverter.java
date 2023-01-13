@@ -21,12 +21,17 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.aero.conversion.ConversionBus;
 import org.aero.conversion.exception.ConversionException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"ClassCanBeRecord"})
 public class MapToMapConverter implements ConditionalConverter<Map<Object, Object>, Map<Object, Object>> {
@@ -39,35 +44,35 @@ public class MapToMapConverter implements ConditionalConverter<Map<Object, Objec
 
     @Override
     public boolean matches(Type sourceType, Type targetType) {
-        Type[] sourceParams = this.getParameterTypes(sourceType);
-        Type[] targetParams = this.getParameterTypes(targetType);
+        Type[] sourceElementTypes = this.getElementTypes(sourceType);
+        Type[] targetElementTypes = this.getElementTypes(targetType);
 
-        if (sourceParams == null || targetParams == null) {
+        if (sourceElementTypes == null || targetElementTypes == null) {
             return false;
         }
 
-        return this.conversionBus.canConvert(sourceParams[0], targetParams[0])
-            && this.conversionBus.canConvert(sourceParams[1], targetParams[1]);
+        return this.conversionBus.canConvert(sourceElementTypes[0], targetElementTypes[0])
+            && this.conversionBus.canConvert(sourceElementTypes[1], targetElementTypes[1]);
     }
 
     @Override
     public @NotNull Map<Object, Object> convert(@NotNull Map<Object, Object> source, @NotNull Type sourceType,
-        @NotNull Type targetType)
-        throws ConversionException {
+        @NotNull Type targetType) throws ConversionException {
+        Class<?> erasedTargetType = GenericTypeReflector.erase(targetType);
 
-        // Shortcut if possible...
-        boolean copyRequired = !GenericTypeReflector.erase(targetType).isInstance(source);
+        boolean copyRequired = !erasedTargetType.isInstance(source);
         if (!copyRequired && source.isEmpty()) {
             return source;
         }
 
-        Type[] sourceParams = this.getParameterTypes(sourceType);
-        Type[] targetParams = this.getParameterTypes(targetType);
+        Type[] sourceParams = this.getElementTypes(sourceType);
+        Type[] targetParams = this.getElementTypes(targetType);
         List<Map.Entry<Object, Object>> targetEntries = new ArrayList<>(source.size());
 
         for (Map.Entry<Object, Object> entry : source.entrySet()) {
             Object sourceKey = entry.getKey();
             Object sourceValue = entry.getValue();
+
             Object targetKey = this.conversionBus.convert(sourceKey, sourceParams[0], targetParams[0]);
             Object targetValue = this.conversionBus.convert(targetKey, sourceParams[0], targetParams[1]);
             targetEntries.add(new AbstractMap.SimpleEntry<>(targetKey, targetValue));
@@ -80,7 +85,8 @@ public class MapToMapConverter implements ConditionalConverter<Map<Object, Objec
             return source;
         }
 
-        Map<Object, Object> targetMap = new HashMap<>(targetEntries.size());
+        Map<Object, Object> targetMap = this.createMap(erasedTargetType,
+            GenericTypeReflector.erase(targetParams[0]), source.size());
 
         for (Map.Entry<Object, Object> entry : targetEntries) {
             targetMap.put(entry.getKey(), entry.getValue());
@@ -90,7 +96,7 @@ public class MapToMapConverter implements ConditionalConverter<Map<Object, Objec
 
     }
 
-    private Type[] getParameterTypes(Type type) {
+    private @Nullable Type[] getElementTypes(Type type) {
         if (type instanceof ParameterizedType parameterizedType) {
             Type[] typeArgs = parameterizedType.getActualTypeArguments();
             if (typeArgs.length != 2) {
@@ -101,5 +107,24 @@ public class MapToMapConverter implements ConditionalConverter<Map<Object, Objec
         }
 
         return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public Map<Object, Object> createMap(Class<?> mapType, Class<?> keyType, int capacity) {
+        if (mapType.isInterface()) {
+            if (SortedMap.class == mapType || NavigableMap.class == mapType) {
+                return new TreeMap<>();
+            } else {
+                throw new IllegalArgumentException("Unsupported Map interface: " + mapType.getName());
+            }
+        } else if (EnumMap.class == mapType) {
+            if (!Enum.class.isAssignableFrom(keyType)) {
+                throw new IllegalArgumentException("Supplied type is not an enum: " + keyType.getName());
+            }
+
+            return new EnumMap(keyType.asSubclass(Enum.class));
+        }
+
+        return new LinkedHashMap<>(capacity);
     }
 }

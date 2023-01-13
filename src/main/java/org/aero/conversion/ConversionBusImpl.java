@@ -117,9 +117,9 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
         }
 
         @Override
-        public @NotNull Object convert(@NotNull Object obj, @NotNull Type sourceType,
+        public @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType,
             @NotNull Type targetType) throws ConversionException {
-            return this.converter.convert(obj, sourceType, targetType);
+            return this.converter.convert(source, sourceType, targetType);
         }
 
         @Override
@@ -146,10 +146,10 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
         }
 
         @Override
-        public @NotNull Object convert(@NotNull Object obj, @NotNull Type sourceType,
+        public @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType,
             @NotNull Type targetType) throws ConversionException {
             return this.converterFactory.create(GenericTypeReflector.erase(targetType))
-                .convert(obj, sourceType, targetType);
+                .convert(source, sourceType, targetType);
         }
 
         @Override

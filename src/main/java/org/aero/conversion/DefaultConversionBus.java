@@ -21,6 +21,7 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.UUID;
 import org.aero.conversion.converter.CharacterToNumberFactory;
+import org.aero.conversion.converter.CollectionToCollectionConverter;
 import org.aero.conversion.converter.MapToMapConverter;
 import org.aero.conversion.converter.NumberToCharacterConverter;
 import org.aero.conversion.converter.NumberToNumberConverterFactory;
@@ -66,6 +67,8 @@ final class DefaultConversionBus extends ConversionBusImpl {
         this.register(Charset.class, String.class, new ObjectToStringConverter());
         this.register(Currency.class, String.class, new ObjectToStringConverter());
         this.register(UUID.class, String.class, new ObjectToStringConverter());
+        // -> Collection
+        this.register(new CollectionToCollectionConverter(this));
         // -> Map
         this.register(new MapToMapConverter(this));
     }
