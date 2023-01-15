@@ -39,7 +39,7 @@ allprojects {
     dependencies {
         implementation("com.github.conelux:Common:6ce6fc4dae")
 
-        implementation("org.jetbrains:annotations:23.0.0")
+        implementation("org.jetbrains:annotations:24.0.0")
         implementation("io.leangen.geantyref:geantyref:1.3.14")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
