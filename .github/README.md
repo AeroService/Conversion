@@ -12,7 +12,7 @@ A library to coerce an input value to another type
 
 # Contributing
 
-See [the contributing file](https://github.com/AeroService/.github/CONTRIBUTING.md)!
+See [the contributing file](https://github.com/AeroService/.github/blob/main/CONTRIBUTING.md)!
 All WIP features are previewed as Draft PRs!
 
 # License
