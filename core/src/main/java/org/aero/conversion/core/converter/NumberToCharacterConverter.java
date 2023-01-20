@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
+public class NumberToCharacterConverter implements Converter<Number, Character> {
+
+    @Override
+    public @NotNull Character convert(@NotNull final Number source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return (char) source.shortValue();
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

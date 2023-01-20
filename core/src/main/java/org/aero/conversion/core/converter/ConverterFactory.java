@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
-    }
+@SuppressWarnings("MissingJavaDocType")
+@FunctionalInterface
+public interface ConverterFactory<T, U> {
+
+    @SuppressWarnings("MissingJavaDocMethod")
+    <V extends U> Converter<T, V> create(Class<V> type);
+
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

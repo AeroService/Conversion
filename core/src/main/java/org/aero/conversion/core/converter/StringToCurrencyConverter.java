@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+import java.util.Currency;
+
+@SuppressWarnings("MissingJavaDocType")
+public class StringToCurrencyConverter implements Converter<String, Currency> {
+
+    @Override
+    public @NotNull Currency convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return Currency.getInstance(source.trim());
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+import java.util.UUID;
+
+@SuppressWarnings("MissingJavaDocType")
+public class StringToUuidConverter implements Converter<String, UUID> {
+
+    @Override
+    public @NotNull UUID convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return UUID.fromString(source.trim());
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

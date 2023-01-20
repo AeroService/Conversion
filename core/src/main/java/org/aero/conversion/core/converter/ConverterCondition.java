@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
-    }
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
+public interface ConverterCondition {
+
+    @SuppressWarnings("MissingJavaDocMethod")
+    boolean matches(@NotNull Type sourceType, @NotNull Type targetType);
+
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

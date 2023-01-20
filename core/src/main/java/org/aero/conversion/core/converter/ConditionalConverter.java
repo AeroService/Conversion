@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
-    }
+@SuppressWarnings("MissingJavaDocType")
+public interface ConditionalConverter<T, U> extends Converter<T, U>, ConverterCondition {
+
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

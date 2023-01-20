@@ -15,13 +15,11 @@
  */
 
 import io.github.gradlenexus.publishplugin.NexusPublishExtension
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("build-logic")
     alias(libs.plugins.spotless)
     alias(libs.plugins.nexusPublish)
-    alias(libs.plugins.shadow)
 }
 
 defaultTasks("build", "test", "shadowJar")
@@ -41,65 +39,67 @@ allprojects {
     }
 }
 
-apply(plugin = "maven-publish")
+subprojects {
+    apply(plugin = "maven-publish")
 
-apply(plugin = "java-library")
-apply(plugin = "checkstyle")
-apply(plugin = "com.diffplug.spotless")
+    apply(plugin = "java-library")
+    apply(plugin = "checkstyle")
+    apply(plugin = "com.diffplug.spotless")
 
-dependencies {
-    "implementation"(rootProject.libs.annotations)
-    "implementation"(rootProject.libs.slf4j)
+    dependencies {
+        "implementation"(rootProject.libs.annotations)
+        "implementation"(rootProject.libs.slf4j)
 
-    "implementation"(rootProject.libs.common)
-    "implementation"(rootProject.libs.geantyref)
+        "implementation"(rootProject.libs.common)
+        "implementation"(rootProject.libs.geantyref)
 
-    "testImplementation"(rootProject.libs.bundles.junit)
-    "testImplementation"(rootProject.libs.bundles.mockito)
-}
-
-tasks.withType<Jar> {
-    from(rootProject.file("LICENSE"))
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("started", "passed", "skipped", "failed")
+        "testImplementation"(rootProject.libs.bundles.junit)
+        "testImplementation"(rootProject.libs.bundles.mockito)
     }
-    systemProperties(System.getProperties().mapKeys { it.key.toString() })
+
+    tasks.withType<Jar> {
+        from(rootProject.file("LICENSE"))
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        testLogging {
+            events("started", "passed", "skipped", "failed")
+        }
+        systemProperties(System.getProperties().mapKeys { it.key.toString() })
+    }
+
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+        options.encoding = "UTF-8"
+        options.isIncremental = true
+
+    }
+
+    tasks.withType<Checkstyle> {
+        maxErrors = 0
+        maxWarnings = 0
+        configFile = rootProject.file("checkstyle.xml")
+    }
+
+    extensions.configure<CheckstyleExtension> {
+        toolVersion = "10.3.4"
+    }
+
+    tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
+        archiveClassifier.set("javadoc")
+        from(tasks.getByName("javadoc"))
+    }
+
+    tasks.register<org.gradle.jvm.tasks.Jar>("sourcesJar") {
+        archiveClassifier.set("sources")
+        from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
+    }
+
+    configurePublishing("java", true)
 }
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = JavaVersion.VERSION_17.toString()
-    targetCompatibility = JavaVersion.VERSION_17.toString()
-    options.encoding = "UTF-8"
-    options.isIncremental = true
-
-}
-
-tasks.withType<Checkstyle> {
-    maxErrors = 0
-    maxWarnings = 0
-    configFile = rootProject.file("checkstyle.xml")
-}
-
-extensions.configure<CheckstyleExtension> {
-    toolVersion = "10.3.4"
-}
-
-tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
-    archiveClassifier.set("javadoc")
-    from(tasks.getByName("javadoc"))
-}
-
-tasks.register<org.gradle.jvm.tasks.Jar>("sourcesJar") {
-    archiveClassifier.set("sources")
-    from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
-}
-
-configurePublishing("java", true)
 
 extensions.configure<NexusPublishExtension> {
     repositories {
@@ -113,12 +113,4 @@ extensions.configure<NexusPublishExtension> {
     }
 
     useStaging.set(!rootProject.version.toString().endsWith("-SNAPSHOT"))
-}
-
-tasks.withType<ShadowJar> {
-    archiveFileName.set("conversion.jar")
-    archiveVersion.set(null as String?)
-
-    // drop unused classes which are making the jar bigger
-    minimize()
 }

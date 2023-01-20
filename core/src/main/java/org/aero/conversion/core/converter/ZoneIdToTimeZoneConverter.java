@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+import java.time.ZoneId;
+import java.util.TimeZone;
+
+@SuppressWarnings("MissingJavaDocType")
+public class ZoneIdToTimeZoneConverter implements Converter<ZoneId, TimeZone> {
+
+    @Override
+    public @NotNull TimeZone convert(@NotNull final ZoneId source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return TimeZone.getTimeZone(source);
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

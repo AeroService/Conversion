@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+@SuppressWarnings("MissingJavaDocType")
+public class ZonedDateTimeToCalendarConverter implements Converter<ZonedDateTime, Calendar> {
+
+    @Override
+    public @NotNull Calendar convert(@NotNull final ZonedDateTime source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return GregorianCalendar.from(source);
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)
