@@ -16,16 +16,18 @@
 
 package org.aero.conversion.util;
 
-import org.conelux.common.validate.Check;
+import org.aero.common.core.validate.Check;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("MissingJavaDocType")
 public final class ConversionUtil {
 
     private ConversionUtil() {
-
+        throw new UnsupportedOperationException();
     }
 
-    public static Class<?> getEnumType(@NotNull Class<?> targetType) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public static Class<?> enumType(@NotNull final Class<?> targetType) {
         Class<?> enumType = targetType;
         while (enumType != null && !enumType.isEnum()) {
             enumType = enumType.getSuperclass();

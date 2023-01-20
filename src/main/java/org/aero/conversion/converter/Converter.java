@@ -16,13 +16,16 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.aero.conversion.exception.ConversionException;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
 @FunctionalInterface
 public interface Converter<T, U> {
 
+    @SuppressWarnings("MissingJavaDocMethod")
     @NotNull U convert(@NotNull T source, @NotNull Type sourceType, @NotNull Type targetType) throws ConversionException;
 
 }

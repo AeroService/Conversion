@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.converter;
+plugins {
+    `kotlin-dsl`
+}
 
-import org.jetbrains.annotations.NotNull;
+repositories {
+    gradlePluginPortal()
+}
 
-import java.lang.reflect.Type;
-
-@SuppressWarnings("MissingJavaDocType")
-public class NumberToCharacterConverter implements Converter<Number, Character> {
-
-    @Override
-    public @NotNull Character convert(@NotNull final Number source, @NotNull final Type sourceType, @NotNull final Type targetType) {
-        return (char) source.shortValue();
-    }
+dependencies {
+    implementation("net.kyori", "indra-common", "3.0.1")
 }

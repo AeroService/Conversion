@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.converter;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Type;
-
-@SuppressWarnings("MissingJavaDocType")
-public class NumberToCharacterConverter implements Converter<Number, Character> {
-
-    @Override
-    public @NotNull Character convert(@NotNull final Number source, @NotNull final Type sourceType, @NotNull final Type targetType) {
-        return (char) source.shortValue();
-    }
+plugins {
+    id("net.kyori.indra.git")
 }

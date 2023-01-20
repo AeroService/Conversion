@@ -16,22 +16,24 @@
 
 package org.aero.conversion.converter;
 
+import org.aero.conversion.exception.ConversionException;
+import org.aero.conversion.exception.ConversionFailedException;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import org.aero.conversion.exception.ConversionFailedException;
-import org.aero.conversion.exception.ConversionException;
-import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("MissingJavaDocType")
 public class NumberToNumberConverterFactory implements ConverterFactory<Number, Number>, ConverterCondition {
 
     @Override
-    public <T extends Number> Converter<Number, T> create(Class<T> targetType) {
+    public <T extends Number> Converter<Number, T> create(final Class<T> targetType) {
         return new NumberToNumber<>(targetType);
     }
 
     @Override
-    public boolean matches(Type sourceType, Type targetType) {
+    public boolean matches(@NotNull final Type sourceType, @NotNull final Type targetType) {
         return !sourceType.equals(targetType);
     }
 
@@ -43,15 +45,15 @@ public class NumberToNumberConverterFactory implements ConverterFactory<Number, 
 
         private final Class<T> targetType;
 
-        NumberToNumber(Class<T> targetType) {
+        private NumberToNumber(final Class<T> targetType) {
             this.targetType = targetType;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull T convert(@NotNull Number source, @NotNull Type sourceType, @NotNull Type targetType)
+        public @NotNull T convert(@NotNull final Number source, @NotNull final Type sourceType, @NotNull final Type targetType)
             throws ConversionException {
-            long value = this.convertToLong(source, sourceType, targetType);
+            final long value = this.convertToLong(source, sourceType, targetType);
             if (Byte.class == this.targetType) {
                 if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
                     return (T) Byte.valueOf(source.byteValue());
@@ -83,8 +85,8 @@ public class NumberToNumberConverterFactory implements ConverterFactory<Number, 
             throw new ConversionFailedException(sourceType, targetType);
         }
 
-        private long convertToLong(Number source, Type sourceType, Type targetType) throws ConversionException {
-            BigInteger bigInt = source instanceof BigInteger bigInteger ? bigInteger
+        private long convertToLong(final Number source, final Type sourceType, final Type targetType) throws ConversionException {
+            final BigInteger bigInt = source instanceof BigInteger bigInteger ? bigInteger
                 : source instanceof BigDecimal bigDecimal ? bigDecimal.toBigInteger() : null;
 
             if (bigInt == null || (bigInt.compareTo(LONG_MIN) >= 0 && bigInt.compareTo(LONG_MAX) <= 0)) {

@@ -19,13 +19,18 @@ package org.aero.conversion;
 import org.aero.conversion.converter.ConditionalConverter;
 import org.aero.conversion.converter.Converter;
 import org.aero.conversion.converter.ConverterFactory;
+import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("MissingJavaDocType")
 public interface ConverterRegistry {
 
-    <U, V> void register(Class<? extends U> source, Class<V> target, Converter<U, V> converter);
+    @SuppressWarnings("MissingJavaDocMethod")
+    <U, V> void register(@NotNull Class<? extends U> source, @NotNull Class<V> target, @NotNull Converter<U, V> converter);
 
-    void register(ConditionalConverter<?, ?> converter);
+    @SuppressWarnings("MissingJavaDocMethod")
+    void register(@NotNull ConditionalConverter<?, ?> converter);
 
-    <U, V> void register(Class<? extends U> source, Class<V> target, ConverterFactory<?, ?> converterFactory);
+    @SuppressWarnings("MissingJavaDocMethod")
+    <U, V> void register(@NotNull Class<? extends U> source, @NotNull Class<V> target, @NotNull ConverterFactory<?, ?> converterFactory);
 
 }

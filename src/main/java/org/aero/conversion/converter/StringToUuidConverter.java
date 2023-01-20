@@ -16,14 +16,16 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
-import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
-public class StringToUUIDConverter implements Converter<String, UUID> {
+import java.lang.reflect.Type;
+import java.util.UUID;
+
+@SuppressWarnings("MissingJavaDocType")
+public class StringToUuidConverter implements Converter<String, UUID> {
 
     @Override
-    public @NotNull UUID convert(@NotNull String source, @NotNull Type sourceType, @NotNull Type targetType) {
+    public @NotNull UUID convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType) {
         return UUID.fromString(source.trim());
     }
 }

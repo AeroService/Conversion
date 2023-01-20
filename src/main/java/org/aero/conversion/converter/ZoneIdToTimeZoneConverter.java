@@ -16,16 +16,17 @@
 
 package org.aero.conversion.converter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 import java.time.ZoneId;
 import java.util.TimeZone;
-import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("MissingJavaDocType")
 public class ZoneIdToTimeZoneConverter implements Converter<ZoneId, TimeZone> {
 
     @Override
-    public @NotNull TimeZone convert(@NotNull ZoneId source, @NotNull Type sourceType,
-        @NotNull Type targetType) {
+    public @NotNull TimeZone convert(@NotNull final ZoneId source, @NotNull final Type sourceType, @NotNull final Type targetType) {
         return TimeZone.getTimeZone(source);
     }
 }

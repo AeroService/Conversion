@@ -17,25 +17,27 @@
 package org.aero.conversion;
 
 import io.leangen.geantyref.TypeToken;
-import java.util.HashMap;
-import java.util.Map;
 import org.aero.conversion.exception.ConversionException;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 class ConversionBusTest {
 
     @Test
     void test() {
-        ConversionBus conversionBus = ConversionBus.createDefault();
+        final ConversionBus conversionBus = ConversionBus.createDefault();
 
         try {
-            Map<String, Integer> in = new HashMap<>();
+            final Map<String, Integer> in = new HashMap<>();
             in.put("a", 10);
 
-            Map<String, String> res = conversionBus.convert(in, new TypeToken<Map<String, Integer>>() {}, new TypeToken<Map<String, String>>() {});
+            final Map<String, String> res = conversionBus.convert(in, new TypeToken<Map<String, Integer>>() {},
+                new TypeToken<Map<String, String>>() {});
 
             System.out.println(res);
-        } catch (ConversionException e) {
+        } catch (final ConversionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -47,11 +49,11 @@ class ConversionBusTest {
 
     }
 
-    static class Lol {
+    private static final class Lol {
 
         private final String name;
 
-        public Lol(String name) {
+        private Lol(final String name) {
             this.name = name;
         }
     }

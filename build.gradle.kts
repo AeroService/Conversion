@@ -14,45 +14,61 @@
  * limitations under the License.
  */
 
+import io.github.gradlenexus.publishplugin.NexusPublishExtension
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
-    id("java")
-    id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("build-logic")
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.nexusPublish)
+    alias(libs.plugins.shadow)
 }
 
-defaultTasks("build", "shadowJar")
+defaultTasks("build", "test", "shadowJar")
 
 allprojects {
-    group = "org.aero"
-    version = "1.0.0"
+    group = "org.aero.conversion"
+    version = "1.0.0-SNAPSHOT"
     description = "A library to coerce an input value to another type"
-
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    apply(plugin = "com.github.johnrengelman.shadow")
 
     repositories {
         mavenCentral()
-        maven(url = "https://jitpack.io")
-    }
 
-    dependencies {
-        implementation("com.github.conelux:Common:6ce6fc4dae")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 
-        implementation("org.jetbrains:annotations:24.0.0")
-        implementation("io.leangen.geantyref:geantyref:1.3.14")
-
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.9.2")
-        testImplementation("org.junit.platform:junit-platform-suite-api:1.9.2")
-        testRuntimeOnly("org.junit.platform:junit-platform-suite-engine:1.9.2")
+        mavenLocal()
     }
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
+apply(plugin = "maven-publish")
+
+apply(plugin = "java-library")
+apply(plugin = "checkstyle")
+apply(plugin = "com.diffplug.spotless")
+
+dependencies {
+    "implementation"(rootProject.libs.annotations)
+    "implementation"(rootProject.libs.slf4j)
+
+    "implementation"(rootProject.libs.common)
+    "implementation"(rootProject.libs.geantyref)
+
+    "testImplementation"(rootProject.libs.bundles.junit)
+    "testImplementation"(rootProject.libs.bundles.mockito)
+}
+
+tasks.withType<Jar> {
+    from(rootProject.file("LICENSE"))
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        events("started", "passed", "skipped", "failed")
+    }
+    systemProperties(System.getProperties().mapKeys { it.key.toString() })
 }
 
 tasks.withType<JavaCompile> {
@@ -63,11 +79,46 @@ tasks.withType<JavaCompile> {
 
 }
 
-publishing {
-    publications {
-        create<MavenPublication>(project.name) {
-            artifact(tasks["shadowJar"])
-            project.shadow.component(this)
+tasks.withType<Checkstyle> {
+    maxErrors = 0
+    maxWarnings = 0
+    configFile = rootProject.file("checkstyle.xml")
+}
+
+extensions.configure<CheckstyleExtension> {
+    toolVersion = "10.3.4"
+}
+
+tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+    from(tasks.getByName("javadoc"))
+}
+
+tasks.register<org.gradle.jvm.tasks.Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
+}
+
+configurePublishing("java", true)
+
+extensions.configure<NexusPublishExtension> {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            username.set(System.getenv("SONATYPE_USER"))
+            password.set(System.getenv("SONATYPE_TOKEN"))
         }
     }
+
+    useStaging.set(!rootProject.version.toString().endsWith("-SNAPSHOT"))
+}
+
+tasks.withType<ShadowJar> {
+    archiveFileName.set("conversion.jar")
+    archiveVersion.set(null as String?)
+
+    // drop unused classes which are making the jar bigger
+    minimize()
 }

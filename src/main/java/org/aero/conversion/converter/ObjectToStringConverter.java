@@ -16,13 +16,15 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
 public class ObjectToStringConverter implements Converter<Object, String> {
 
     @Override
-    public @NotNull String convert(@NotNull Object source, @NotNull Type sourceType, @NotNull Type targetType) {
+    public @NotNull String convert(@NotNull final Object source, @NotNull final Type sourceType, @NotNull final Type targetType) {
         return source.toString();
     }
 }

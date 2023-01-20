@@ -17,20 +17,21 @@
 package org.aero.conversion;
 
 import io.leangen.geantyref.GenericTypeReflector;
+import org.aero.common.core.validate.Check;
+import org.aero.conversion.converter.ConditionalConverter;
+import org.aero.conversion.converter.Converter;
+import org.aero.conversion.converter.ConverterCondition;
+import org.aero.conversion.converter.ConverterFactory;
+import org.aero.conversion.exception.ConversionException;
+import org.aero.conversion.exception.ConverterNotFoundException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.aero.conversion.exception.ConversionException;
-import org.conelux.common.validate.Check;
-import org.aero.conversion.converter.ConditionalConverter;
-import org.aero.conversion.converter.Converter;
-import org.aero.conversion.converter.ConverterCondition;
-import org.aero.conversion.converter.ConverterFactory;
-import org.aero.conversion.exception.ConverterNotFoundException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unchecked"})
 sealed class ConversionBusImpl implements ConversionBus permits DefaultConversionBus {
@@ -45,48 +46,50 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
     }
 
     @Override
-    public <U, V> void register(Class<? extends U> source, Class<V> target, Converter<U, V> converter) {
+    public <U, V> void register(@NotNull final Class<? extends U> source, @NotNull final Class<V> target, @NotNull final Converter<U, V> converter) {
         this.register(new ConverterAdapter(converter, source, target));
     }
 
     @Override
-    public void register(ConditionalConverter<?, ?> converter) {
+    public void register(@NotNull final ConditionalConverter<?, ?> converter) {
         this.converters.add((ConditionalConverter<Object, Object>) converter);
         this.invalidateCache();
     }
 
     @Override
-    public <U, V> void register(Class<? extends U> source, Class<V> target, ConverterFactory<?, ?> converterFactory) {
-        this.register(new ConverterFactoryAdapter(converterFactory, source, target));
+    public <U, V> void register(@NotNull final Class<? extends U> source, @NotNull final Class<V> target,
+        @NotNull final ConverterFactory<?, ?> factory
+    ) {
+        this.register(new ConverterFactoryAdapter(factory, source, target));
     }
 
     @Override
-    public boolean canConvert(@NotNull Type sourceType, @NotNull Type targetType) {
+    public boolean canConvert(@NotNull final Type sourceType, @NotNull final Type targetType) {
         Check.notNull(sourceType, "sourceType");
         Check.notNull(targetType, "targetType");
-        return this.getConverter(GenericTypeReflector.box(sourceType), GenericTypeReflector.box(targetType)) != null;
+        return this.converter(GenericTypeReflector.box(sourceType), GenericTypeReflector.box(targetType)) != null;
     }
 
     @Override
-    public @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType, @NotNull Type targetType)
+    public @NotNull Object convert(@NotNull final Object source, @NotNull final Type sourceType, @NotNull final Type targetType)
         throws ConversionException {
         Check.notNull(source, "source");
         Check.notNull(targetType, "targetType");
 
-        targetType = GenericTypeReflector.box(targetType);
-        Converter<Object, Object> converter = this.getConverter(sourceType, targetType);
+        final Type boxedTargetType = GenericTypeReflector.box(targetType);
+        final Converter<Object, Object> converter = this.converter(sourceType, boxedTargetType);
 
         if (converter == null) {
             // No Converter found
-            throw new ConverterNotFoundException(sourceType, targetType);
+            throw new ConverterNotFoundException(sourceType, boxedTargetType);
         }
 
-        return converter.convert(source, sourceType, targetType);
+        return converter.convert(source, sourceType, boxedTargetType);
     }
 
-    private @Nullable Converter<Object, Object> getConverter(@NotNull Type sourceType, @NotNull Type targetType) {
+    private @Nullable Converter<Object, Object> converter(@NotNull final Type sourceType, @NotNull final Type targetType) {
         return this.cache.computeIfAbsent(new Key(sourceType, targetType), param -> {
-            for (ConditionalConverter<Object, Object> conv : this.converters) {
+            for (final ConditionalConverter<Object, Object> conv : this.converters) {
                 if (conv.matches(param.sourceType(), param.targetType())) {
                     return conv;
                 }
@@ -110,20 +113,21 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
         private final Type sourceType;
         private final Type targetType;
 
-        public ConverterAdapter(Converter<?, ?> converter, Type sourceType, Type targetType) {
+        private ConverterAdapter(final Converter<?, ?> converter, final Type sourceType, final Type targetType) {
             this.converter = (Converter<Object, Object>) converter;
             this.sourceType = sourceType;
             this.targetType = targetType;
         }
 
         @Override
-        public @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType,
-            @NotNull Type targetType) throws ConversionException {
+        public @NotNull Object convert(@NotNull final Object source, @NotNull final Type sourceType,
+            @NotNull final Type targetType
+        ) throws ConversionException {
             return this.converter.convert(source, sourceType, targetType);
         }
 
         @Override
-        public boolean matches(Type sourceType, Type targetType) {
+        public boolean matches(final @NotNull Type sourceType, final @NotNull Type targetType) {
             if (this.targetType != targetType) {
                 return false;
             }
@@ -138,25 +142,27 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
         private final Class<?> sourceType;
         private final Class<?> targetType;
 
-        public ConverterFactoryAdapter(ConverterFactory<?, ?> converterFactory, Class<?> sourceType,
-            Class<?> targetType) {
+        private ConverterFactoryAdapter(final ConverterFactory<?, ?> converterFactory, final Class<?> sourceType,
+            final Class<?> targetType
+        ) {
             this.converterFactory = (ConverterFactory<Object, Object>) converterFactory;
             this.sourceType = sourceType;
             this.targetType = targetType;
         }
 
         @Override
-        public @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType,
-            @NotNull Type targetType) throws ConversionException {
+        public @NotNull Object convert(@NotNull final Object source, @NotNull final Type sourceType,
+            @NotNull final Type targetType
+        ) throws ConversionException {
             return this.converterFactory.create(GenericTypeReflector.erase(targetType))
                 .convert(source, sourceType, targetType);
         }
 
         @Override
-        public boolean matches(Type sourceType, Type targetType) {
+        public boolean matches(@NotNull final Type sourceType, @NotNull final Type targetType) {
             if (this.converterFactory instanceof ConverterCondition condition && condition.matches(sourceType,
                 targetType)) {
-                Converter<?, ?> converter = this.converterFactory.create(GenericTypeReflector.erase(targetType));
+                final Converter<?, ?> converter = this.converterFactory.create(GenericTypeReflector.erase(targetType));
                 if (converter instanceof ConverterCondition converterCondition) {
                     return converterCondition.matches(sourceType, targetType);
                 }
@@ -173,7 +179,7 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
     record Key(Type sourceType, Type targetType) {
 
         @Override
-        public boolean equals(@Nullable Object other) {
+        public boolean equals(@Nullable final Object other) {
             if (this == other) {
                 return true;
             }
@@ -184,15 +190,19 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
         }
     }
 
-    private static class NoOpConverter implements ConditionalConverter<Object, Object> {
+    private static final class NoOpConverter implements ConditionalConverter<Object, Object> {
+
+        private NoOpConverter() {
+
+        }
 
         @Override
-        public @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType, @NotNull Type targetType) {
+        public @NotNull Object convert(@NotNull final Object source, @NotNull final Type sourceType, @NotNull final Type targetType) {
             return source;
         }
 
         @Override
-        public boolean matches(Type sourceType, Type targetType) {
+        public boolean matches(@NotNull final Type sourceType, @NotNull final Type targetType) {
             return true;
         }
     }
