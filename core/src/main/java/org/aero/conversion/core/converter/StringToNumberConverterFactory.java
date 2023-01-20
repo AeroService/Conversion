@@ -50,22 +50,26 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             }
             final String trimmed = source.trim();
 
-            if (Byte.class == this.targetType) {
-                return (T) Byte.valueOf(trimmed);
-            } else if (Short.class == this.targetType) {
-                return (T) Short.valueOf(trimmed);
-            } else if (Integer.class == this.targetType) {
-                return (T) Integer.valueOf(trimmed);
-            } else if (Long.class == this.targetType) {
-                return (T) Long.valueOf(trimmed);
-            } else if (BigInteger.class == this.targetType) {
-                return (T) new BigInteger(trimmed);
-            } else if (Float.class == this.targetType) {
-                return (T) Float.valueOf(trimmed);
-            } else if (Double.class == this.targetType) {
-                return (T) Double.valueOf(trimmed);
-            } else if (BigDecimal.class == this.targetType || Number.class == this.targetType) {
-                return (T) new BigDecimal(trimmed);
+            try {
+                if (Byte.class == this.targetType) {
+                    return (T) Byte.valueOf(trimmed);
+                } else if (Short.class == this.targetType) {
+                    return (T) Short.valueOf(trimmed);
+                } else if (Integer.class == this.targetType) {
+                    return (T) Integer.valueOf(trimmed);
+                } else if (Long.class == this.targetType) {
+                    return (T) Long.valueOf(trimmed);
+                } else if (BigInteger.class == this.targetType) {
+                    return (T) new BigInteger(trimmed);
+                } else if (Float.class == this.targetType) {
+                    return (T) Float.valueOf(trimmed);
+                } else if (Double.class == this.targetType) {
+                    return (T) Double.valueOf(trimmed);
+                } else if (BigDecimal.class == this.targetType || Number.class == this.targetType) {
+                    return (T) new BigDecimal(trimmed);
+                }
+            } catch (final NumberFormatException e) {
+                throw new ConversionFailedException(sourceType, targetType, e);
             }
 
             throw new ConversionFailedException(sourceType, targetType);
