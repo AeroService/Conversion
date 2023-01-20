@@ -59,7 +59,7 @@ final class ObjectFieldDiscoverer implements FieldDiscoverer<Map<Field, Object>>
             return null;
         }
 
-        final List<FieldInfo<U, Map<Field, Object>>> fieldInfos = new ArrayList<>();
+        final List<MappingField<U, Map<Field, Object>>> mappingFields = new ArrayList<>();
         Type collectType = targetType;
         Class<?> collectClass = erasedTargetType;
         while (true) {
@@ -70,7 +70,7 @@ final class ObjectFieldDiscoverer implements FieldDiscoverer<Map<Field, Object>>
 
                 field.setAccessible(true);
                 final Type fieldType = GenericTypeReflector.getFieldType(field, collectType);
-                fieldInfos.add(new FieldInfo<>(
+                mappingFields.add(new MappingField<>(
                     field.getName(),
                     fieldType,
                     (intermediate, value) -> intermediate.put(field, value),
@@ -85,7 +85,7 @@ final class ObjectFieldDiscoverer implements FieldDiscoverer<Map<Field, Object>>
             collectType = GenericTypeReflector.getExactSuperType(collectType, collectClass);
         }
 
-        return new FieldDiscovererResultImpl<>(fieldInfos, new InstanceFactory<>() {
+        return new FieldDiscovererResultImpl<>(mappingFields, new InstanceFactory<>() {
             @Override
             public Map<Field, Object> begin() {
                 return new HashMap<>();

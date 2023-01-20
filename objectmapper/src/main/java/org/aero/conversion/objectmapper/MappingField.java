@@ -16,22 +16,12 @@
 
 package org.aero.conversion.objectmapper;
 
-import io.leangen.geantyref.GenericTypeReflector;
 import org.aero.common.core.function.ThrowableFunction;
-import org.aero.conversion.core.exception.ConversionException;
 
 import java.lang.reflect.Type;
 import java.util.function.BiConsumer;
 
-record FieldInfo<T, U>(String name, Type type, Deserializer<U> deserializer, Serializer<T> serializer) {
-
-    public void validateValue(final Object value) throws ConversionException {
-        if (value == null || GenericTypeReflector.erase(GenericTypeReflector.box(this.type())).isInstance(value)) {
-            return;
-        }
-
-        throw new ConversionException("Object " + value + " is not of expected type " + this.type());
-    }
+record MappingField<T, U>(String name, Type type, Deserializer<U> deserializer, Serializer<T> serializer) {
 
     public interface Deserializer<T> extends BiConsumer<T, Object> {
 
@@ -40,5 +30,4 @@ record FieldInfo<T, U>(String name, Type type, Deserializer<U> deserializer, Ser
     interface Serializer<T> extends ThrowableFunction<T, Object, IllegalAccessException> {
 
     }
-
 }

@@ -41,13 +41,13 @@ public interface FieldDiscoverer<T> {
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    <U> @Nullable Result<U, T> discover(Type target) throws ConversionException;
+    <U> @Nullable Result<U, T> discover(@NotNull Type target) throws ConversionException;
 
     @SuppressWarnings("MissingJavaDocType")
     interface Result<T, U> {
 
         @SuppressWarnings("MissingJavaDocMethod")
-        @NotNull List<FieldInfo<T, U>> fieldInfos();
+        @NotNull List<MappingField<T, U>> fieldInfos();
 
         @SuppressWarnings("MissingJavaDocMethod")
         @NotNull InstanceFactory<U> instanceFactory();

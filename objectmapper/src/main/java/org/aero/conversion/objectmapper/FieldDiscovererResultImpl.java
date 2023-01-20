@@ -18,7 +18,7 @@ package org.aero.conversion.objectmapper;
 
 import java.util.List;
 
-record FieldDiscovererResultImpl<T, U>(List<FieldInfo<T, U>> fieldInfos, FieldDiscoverer.InstanceFactory<U> instanceFactory)
+record FieldDiscovererResultImpl<T, U>(List<MappingField<T, U>> mappingFields, FieldDiscoverer.InstanceFactory<U> instanceFactory)
     implements FieldDiscoverer.Result<T, U> {
 
 }
