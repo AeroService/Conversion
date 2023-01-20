@@ -17,6 +17,7 @@
 import io.github.gradlenexus.publishplugin.NexusPublishExtension
 
 plugins {
+    id("build-logic")
     alias(libs.plugins.spotless)
     alias(libs.plugins.nexusPublish)
 }
@@ -95,7 +96,7 @@ subprojects {
         from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
     }
 
-    //configurePublishing("java", true)
+    configurePublishing("java", true)
 }
 
 extensions.configure<NexusPublishExtension> {
