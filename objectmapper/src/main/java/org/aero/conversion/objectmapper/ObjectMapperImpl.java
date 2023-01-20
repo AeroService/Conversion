@@ -71,7 +71,7 @@ final class ObjectMapperImpl<T, U> implements ObjectMapper<T> {
                 continue;
             }
 
-            final Object fieldValue = this.conversionBus.convert(mapValue, this.type, field.type());
+            final Object fieldValue = this.conversionBus.convert(mapValue, mapValue.getClass(), field.type());
 
             field.validateValue(fieldValue);
             field.deserializer().accept(fieldData, fieldValue);
