@@ -21,7 +21,7 @@ plugins {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("conversion-objectmapper.jar")
+    archiveFileName.set("conversion-object-mapper.jar")
     archiveVersion.set(null as String?)
 
     // drop unused classes which are making the jar bigger
