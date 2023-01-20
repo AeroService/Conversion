@@ -160,11 +160,15 @@ sealed class ConversionBusImpl implements ConversionBus permits DefaultConversio
 
         @Override
         public boolean matches(@NotNull final Type sourceType, @NotNull final Type targetType) {
-            if (this.converterFactory instanceof ConverterCondition condition && condition.matches(sourceType,
-                targetType)) {
-                final Converter<?, ?> converter = this.converterFactory.create(GenericTypeReflector.erase(targetType));
-                if (converter instanceof ConverterCondition converterCondition) {
-                    return converterCondition.matches(sourceType, targetType);
+            if (this.converterFactory instanceof ConverterCondition condition && condition.matches(sourceType, targetType)) {
+                try {
+                    final Converter<?, ?> converter = this.converterFactory.create(GenericTypeReflector.erase(targetType));
+
+                    if (converter instanceof ConverterCondition converterCondition) {
+                        return converterCondition.matches(sourceType, targetType);
+                    }
+                } catch (final ConversionException ignored) {
+                    return false;
                 }
             }
 

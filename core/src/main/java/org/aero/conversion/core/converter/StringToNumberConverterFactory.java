@@ -28,7 +28,7 @@ import java.math.BigInteger;
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
     @Override
-    public <T extends Number> Converter<String, T> create(final Class<T> targetType) {
+    public @NotNull <T extends Number> Converter<String, T> create(final Class<T> targetType) {
         return new StringToNumber<>(targetType);
     }
 

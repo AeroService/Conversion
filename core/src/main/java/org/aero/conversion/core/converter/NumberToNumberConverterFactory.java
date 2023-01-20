@@ -28,7 +28,7 @@ import java.math.BigInteger;
 public class NumberToNumberConverterFactory implements ConverterFactory<Number, Number>, ConverterCondition {
 
     @Override
-    public <T extends Number> Converter<Number, T> create(final Class<T> targetType) {
+    public @NotNull <T extends Number> Converter<Number, T> create(final Class<T> targetType) {
         return new NumberToNumber<>(targetType);
     }
 

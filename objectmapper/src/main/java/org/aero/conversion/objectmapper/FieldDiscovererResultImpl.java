@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.core.converter;
+package org.aero.conversion.objectmapper;
 
-import org.aero.conversion.core.exception.ConversionException;
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
-@SuppressWarnings("MissingJavaDocType")
-@FunctionalInterface
-public interface ConverterFactory<T, U> {
-
-    @SuppressWarnings("MissingJavaDocMethod")
-    @NotNull <V extends U> Converter<T, V> create(Class<V> type) throws ConversionException;
+record FieldDiscovererResultImpl<T, U>(List<FieldInfo<T, U>> fieldInfos, FieldDiscoverer.InstanceFactory<U> instanceFactory)
+    implements FieldDiscoverer.Result<T, U> {
 
 }
