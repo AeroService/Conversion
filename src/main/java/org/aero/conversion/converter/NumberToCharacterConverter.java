@@ -16,13 +16,15 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
 public class NumberToCharacterConverter implements Converter<Number, Character> {
 
-	@Override
-	public @NotNull Character convert(@NotNull Number source, @NotNull Type sourceType, @NotNull Type targetType) {
-		return (char) source.shortValue();
-	}
+    @Override
+    public @NotNull Character convert(@NotNull final Number source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return (char) source.shortValue();
+    }
 }

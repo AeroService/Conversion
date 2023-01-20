@@ -16,37 +16,39 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.aero.conversion.exception.ConversionException;
 import org.aero.conversion.exception.ConversionFailedException;
 import org.aero.conversion.util.ConversionUtil;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+import java.lang.reflect.Type;
+
+@SuppressWarnings({"rawtypes", "unchecked", "MissingJavaDocType"})
 public class StringToEnumConverterFactory implements ConverterFactory<String, Enum> {
 
-	@Override
-	public <T extends Enum> Converter<String, T> create(Class<T> targetType) {
-		return new StringToEnum(ConversionUtil.getEnumType(targetType));
-	}
+    @Override
+    public <T extends Enum> Converter<String, T> create(final Class<T> targetType) {
+        return new StringToEnum(ConversionUtil.enumType(targetType));
+    }
 
-	@SuppressWarnings("ClassCanBeRecord")
-    private static class StringToEnum<T extends Enum> implements Converter<String, T> {
+    @SuppressWarnings("ClassCanBeRecord")
+    private static final class StringToEnum<T extends Enum> implements Converter<String, T> {
 
-		private final Class<T> enumType;
+        private final Class<T> enumType;
 
-		StringToEnum(Class<T> enumType) {
-			this.enumType = enumType;
-		}
+        private StringToEnum(final Class<T> enumType) {
+            this.enumType = enumType;
+        }
 
-		@Override
-		public @NotNull T convert(@NotNull String source, @NotNull Type sourceType, @NotNull Type targetType) throws ConversionException {
-			if (source.isEmpty()) {
-				// It's an empty enum identifier: reset the enum value to null.
-				throw new ConversionFailedException(sourceType, targetType);
-			}
-			return (T) Enum.valueOf(this.enumType, source.trim());
-		}
-	}
+        @Override
+        public @NotNull T convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType)
+            throws ConversionException {
+            if (source.isEmpty()) {
+                // It's an empty enum identifier: reset the enum value to null.
+                throw new ConversionFailedException(sourceType, targetType);
+            }
+            return (T) Enum.valueOf(this.enumType, source.trim());
+        }
+    }
 
 }

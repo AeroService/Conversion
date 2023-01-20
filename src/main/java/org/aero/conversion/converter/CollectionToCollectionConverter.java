@@ -17,6 +17,10 @@
 package org.aero.conversion.converter;
 
 import io.leangen.geantyref.GenericTypeReflector;
+import org.aero.conversion.ConversionBus;
+import org.aero.conversion.exception.ConversionException;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,23 +33,21 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.aero.conversion.ConversionBus;
-import org.aero.conversion.exception.ConversionException;
-import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("ClassCanBeRecord")
+@SuppressWarnings({"ClassCanBeRecord", "MissingJavaDocType"})
 public class CollectionToCollectionConverter implements ConditionalConverter<Collection<Object>, Collection<Object>> {
 
     private final ConversionBus conversionBus;
 
-    public CollectionToCollectionConverter(ConversionBus conversionBus) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public CollectionToCollectionConverter(final ConversionBus conversionBus) {
         this.conversionBus = conversionBus;
     }
 
     @Override
-    public boolean matches(Type sourceType, Type targetType) {
-        Type sourceParams = this.getElementType(sourceType);
-        Type targetParams = this.getElementType(targetType);
+    public boolean matches(@NotNull final Type sourceType, @NotNull final Type targetType) {
+        final Type sourceParams = this.elementType(sourceType);
+        final Type targetParams = this.elementType(targetType);
 
         if (sourceParams == null || targetParams == null) {
             return false;
@@ -55,24 +57,24 @@ public class CollectionToCollectionConverter implements ConditionalConverter<Col
     }
 
     @Override
-    public @NotNull Collection<Object> convert(@NotNull Collection<Object> source, @NotNull Type sourceType,
-        @NotNull Type targetType) throws ConversionException
-    {
-        Class<?> erasedTargetType = GenericTypeReflector.erase(targetType);
+    public @NotNull Collection<Object> convert(@NotNull final Collection<Object> source, @NotNull final Type sourceType,
+        @NotNull final Type targetType
+    ) throws ConversionException {
+        final Class<?> erasedTargetType = GenericTypeReflector.erase(targetType);
 
         boolean copyRequired = !erasedTargetType.isInstance(source);
         if (!copyRequired && source.isEmpty()) {
             return source;
         }
 
-        Type sourceElementType = this.getElementType(sourceType);
-        Type targetElementType = this.getElementType(targetType);
+        final Type sourceElementType = this.elementType(sourceType);
+        final Type targetElementType = this.elementType(targetType);
 
-        Collection<Object> target = this.createCollection(erasedTargetType,
+        final Collection<Object> target = this.createCollection(erasedTargetType,
             GenericTypeReflector.erase(targetElementType), source.size());
 
-        for (Object sourceElement : source) {
-            Object targetElement = this.conversionBus.convert(sourceElement, sourceElementType, targetElementType);
+        for (final Object sourceElement : source) {
+            final Object targetElement = this.conversionBus.convert(sourceElement, sourceElementType, targetElementType);
             target.add(targetElement);
             if (sourceElement != targetElement) {
                 copyRequired = true;
@@ -82,9 +84,9 @@ public class CollectionToCollectionConverter implements ConditionalConverter<Col
         return (copyRequired ? target : source);
     }
 
-    private Type getElementType(Type type) {
+    private Type elementType(final Type type) {
         if (type instanceof ParameterizedType parameterizedType) {
-            Type[] typeArgs = parameterizedType.getActualTypeArguments();
+            final Type[] typeArgs = parameterizedType.getActualTypeArguments();
             if (typeArgs.length != 1) {
                 return null;
             }
@@ -96,9 +98,9 @@ public class CollectionToCollectionConverter implements ConditionalConverter<Col
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private @NotNull Collection<Object> createCollection(Class<?> collectionType, Class<?> elementType, int capacity) {
-        if (LinkedHashSet.class == collectionType || HashSet.class == collectionType ||
-            Set.class == collectionType || Collection.class == collectionType
+    private @NotNull Collection<Object> createCollection(final Class<?> collectionType, final Class<?> elementType, final int capacity) {
+        if (LinkedHashSet.class == collectionType || HashSet.class == collectionType
+            || Set.class == collectionType || Collection.class == collectionType
         ) {
             return new LinkedHashSet<>(capacity);
         } else if (LinkedList.class == collectionType) {

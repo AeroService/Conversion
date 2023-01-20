@@ -16,29 +16,30 @@
 
 package org.aero.conversion;
 
-import java.nio.charset.Charset;
-import java.util.Currency;
-import java.util.Locale;
-import java.util.UUID;
 import org.aero.conversion.converter.CharacterToNumberFactory;
 import org.aero.conversion.converter.CollectionToCollectionConverter;
+import org.aero.conversion.converter.EnumToIntegerConverter;
+import org.aero.conversion.converter.EnumToStringConverter;
 import org.aero.conversion.converter.MapToMapConverter;
 import org.aero.conversion.converter.NumberToCharacterConverter;
 import org.aero.conversion.converter.NumberToNumberConverterFactory;
-import org.aero.conversion.converter.StringToNumberConverterFactory;
-import org.aero.conversion.converter.EnumToIntegerConverter;
-import org.aero.conversion.converter.EnumToStringConverter;
 import org.aero.conversion.converter.ObjectToStringConverter;
 import org.aero.conversion.converter.StringToBooleanConverter;
 import org.aero.conversion.converter.StringToCharacterConverter;
 import org.aero.conversion.converter.StringToCharsetConverter;
 import org.aero.conversion.converter.StringToCurrencyConverter;
 import org.aero.conversion.converter.StringToEnumConverterFactory;
-import org.aero.conversion.converter.StringToUUIDConverter;
+import org.aero.conversion.converter.StringToNumberConverterFactory;
+import org.aero.conversion.converter.StringToUuidConverter;
+
+import java.nio.charset.Charset;
+import java.util.Currency;
+import java.util.Locale;
+import java.util.UUID;
 
 final class DefaultConversionBus extends ConversionBusImpl {
 
-    public DefaultConversionBus() {
+    DefaultConversionBus() {
         // -> Number
         this.register(String.class, Number.class, new StringToNumberConverterFactory());
         this.register(Character.class, Number.class, new CharacterToNumberFactory(this));
@@ -55,7 +56,7 @@ final class DefaultConversionBus extends ConversionBusImpl {
         // -> Currency
         this.register(String.class, Currency.class, new StringToCurrencyConverter());
         // -> UUID
-        this.register(String.class, UUID.class, new StringToUUIDConverter());
+        this.register(String.class, UUID.class, new StringToUuidConverter());
         // -> Enum
         this.register(String.class, Enum.class, new StringToEnumConverterFactory());
         // -> String

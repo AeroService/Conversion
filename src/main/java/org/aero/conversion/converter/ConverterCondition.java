@@ -16,10 +16,14 @@
 
 package org.aero.conversion.converter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 
+@SuppressWarnings("MissingJavaDocType")
 public interface ConverterCondition {
 
-    boolean matches(Type sourceType, Type targetType);
+    @SuppressWarnings("MissingJavaDocMethod")
+    boolean matches(@NotNull Type sourceType, @NotNull Type targetType);
 
 }

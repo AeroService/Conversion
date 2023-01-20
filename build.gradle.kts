@@ -15,11 +15,13 @@
  */
 
 import io.github.gradlenexus.publishplugin.NexusPublishExtension
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("build-logic")
     alias(libs.plugins.spotless)
     alias(libs.plugins.nexusPublish)
+    alias(libs.plugins.shadow)
 }
 
 defaultTasks("build", "test", "shadowJar")
@@ -34,6 +36,8 @@ allprojects {
 
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+
+        mavenLocal()
     }
 }
 
@@ -109,4 +113,12 @@ extensions.configure<NexusPublishExtension> {
     }
 
     useStaging.set(!rootProject.version.toString().endsWith("-SNAPSHOT"))
+}
+
+tasks.withType<ShadowJar> {
+    archiveFileName.set("conversion.jar")
+    archiveVersion.set(null as String?)
+
+    // drop unused classes which are making the jar bigger
+    minimize()
 }

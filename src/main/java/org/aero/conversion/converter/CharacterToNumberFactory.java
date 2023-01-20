@@ -16,22 +16,24 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.aero.conversion.ConversionBus;
 import org.aero.conversion.exception.ConversionException;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("ClassCanBeRecord")
+import java.lang.reflect.Type;
+
+@SuppressWarnings({"ClassCanBeRecord", "MissingJavaDocType"})
 public class CharacterToNumberFactory implements ConverterFactory<Character, Number> {
 
     private final ConversionBus conversionBus;
 
-    public CharacterToNumberFactory(ConversionBus conversionBus) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public CharacterToNumberFactory(final ConversionBus conversionBus) {
         this.conversionBus = conversionBus;
     }
 
     @Override
-    public <T extends Number> Converter<Character, T> create(Class<T> targetType) {
+    public <T extends Number> Converter<Character, T> create(final Class<T> targetType) {
         return new CharacterToNumber<>(this.conversionBus, targetType);
     }
 
@@ -41,13 +43,13 @@ public class CharacterToNumberFactory implements ConverterFactory<Character, Num
         private final ConversionBus conversionBus;
         private final Class<T> targetType;
 
-        public CharacterToNumber(ConversionBus conversionBus, Class<T> targetType) {
+        private CharacterToNumber(final ConversionBus conversionBus, final Class<T> targetType) {
             this.conversionBus = conversionBus;
             this.targetType = targetType;
         }
 
         @Override
-        public @NotNull T convert(@NotNull Character source, @NotNull Type sourceType, @NotNull Type targetType)
+        public @NotNull T convert(@NotNull final Character source, @NotNull final Type sourceType, @NotNull final Type targetType)
             throws ConversionException {
             return this.conversionBus.convert((short) source.charValue(), this.targetType);
         }

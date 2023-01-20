@@ -16,9 +16,11 @@
 
 package org.aero.conversion.converter;
 
+@SuppressWarnings("MissingJavaDocType")
 @FunctionalInterface
 public interface ConverterFactory<T, U> {
 
+    @SuppressWarnings("MissingJavaDocMethod")
     <V extends U> Converter<T, V> create(Class<V> type);
 
 }

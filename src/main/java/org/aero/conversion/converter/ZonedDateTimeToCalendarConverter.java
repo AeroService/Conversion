@@ -16,17 +16,18 @@
 
 package org.aero.conversion.converter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("MissingJavaDocType")
 public class ZonedDateTimeToCalendarConverter implements Converter<ZonedDateTime, Calendar> {
 
     @Override
-    public @NotNull Calendar convert(@NotNull ZonedDateTime source, @NotNull Type sourceType,
-        @NotNull Type targetType) {
+    public @NotNull Calendar convert(@NotNull final ZonedDateTime source, @NotNull final Type sourceType, @NotNull final Type targetType) {
         return GregorianCalendar.from(source);
     }
 }

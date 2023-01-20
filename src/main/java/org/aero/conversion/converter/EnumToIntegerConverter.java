@@ -16,15 +16,15 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("rawtypes") //TODO: Change
+import java.lang.reflect.Type;
+
+@SuppressWarnings({"rawtypes", "MissingJavaDocType"}) //TODO: Change
 public class EnumToIntegerConverter implements Converter<Enum, Integer> {
 
     @Override
-    public @NotNull Integer convert(@NotNull Enum source, @NotNull Type sourceType,
-        @NotNull Type targetType) {
+    public @NotNull Integer convert(@NotNull final Enum source, @NotNull final Type sourceType, @NotNull final Type targetType) {
         return source.ordinal();
     }
 }

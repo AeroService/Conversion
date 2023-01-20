@@ -16,22 +16,24 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.aero.conversion.exception.ConversionException;
 import org.aero.conversion.exception.ConversionFailedException;
-import java.util.Locale;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+import java.util.Locale;
+import java.util.Set;
+
+@SuppressWarnings("MissingJavaDocType")
 public class StringToBooleanConverter implements Converter<String, Boolean> {
 
     private static final Set<String> TRUE_VALUES = Set.of("true", "t", "on", "yes", "y", "1");
     private static final Set<String> FALSE_VALUES = Set.of("false", "f", "off", "no", "n", "0");
 
     @Override
-    public @NotNull Boolean convert(@NotNull String source, @NotNull Type sourceType,
-        @NotNull Type targetType) throws ConversionException {
-        String trimmed = source.trim().toLowerCase(Locale.ROOT);
+    public @NotNull Boolean convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType)
+        throws ConversionException {
+        final String trimmed = source.trim().toLowerCase(Locale.ROOT);
 
         if (TRUE_VALUES.contains(trimmed)) {
             return Boolean.TRUE;

@@ -16,40 +16,49 @@
 
 package org.aero.conversion.exception;
 
-import java.lang.reflect.Type;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
 public class ConversionException extends Exception {
 
     private @Nullable Type expectedType;
 
+    @SuppressWarnings("MissingJavaDocMethod")
     public ConversionException() {
 
     }
 
-    public ConversionException(String message) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionException(final String message) {
         super(message);
     }
 
-    public ConversionException(Throwable cause) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionException(final Throwable cause) {
         super(cause);
     }
 
-    public ConversionException(@Nullable Type expectedType, String message) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionException(@Nullable final Type expectedType, final String message) {
         super(message);
         this.expectedType = expectedType;
     }
 
-    public ConversionException(@Nullable Type expectedType, Throwable cause) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionException(@Nullable final Type expectedType, final Throwable cause) {
         super(cause);
         this.expectedType = expectedType;
     }
 
-    public ConversionException(@Nullable Type expectedType, String message, Throwable cause) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionException(@Nullable final Type expectedType, final String message, final Throwable cause) {
         super(message, cause);
         this.expectedType = expectedType;
     }
 
+    @SuppressWarnings("MissingJavaDocMethod")
     public @Nullable Type expectedType() {
         return this.expectedType;
     }

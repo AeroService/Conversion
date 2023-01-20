@@ -18,13 +18,16 @@ package org.aero.conversion.exception;
 
 import java.lang.reflect.Type;
 
+@SuppressWarnings("MissingJavaDocType")
 public class ConversionFailedException extends ConversionException {
 
-    public ConversionFailedException(Type sourceType, Type targetType) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionFailedException(final Type sourceType, final Type targetType) {
         super("Failed to convert input value of type [" + sourceType.getTypeName() + "] to [" + targetType.getTypeName() + "]");
     }
 
-    public ConversionFailedException(Type target, Object inputValue, String typeDescription) {
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConversionFailedException(final Type target, final Object inputValue, final String typeDescription) {
         super(target, "Failed to convert input value of type " + inputValue.getClass() + " to " + typeDescription);
     }
 }

@@ -17,34 +17,41 @@
 package org.aero.conversion;
 
 import io.leangen.geantyref.TypeToken;
-import java.lang.reflect.Type;
 import org.aero.conversion.exception.ConversionException;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
 public sealed interface ConversionBus extends ConverterRegistry permits ConversionBusImpl {
 
+    @SuppressWarnings("MissingJavaDocMethod")
     static @NotNull ConversionBus create() {
         return new ConversionBusImpl();
     }
 
+    @SuppressWarnings("MissingJavaDocMethod")
     static @NotNull ConversionBus createDefault() {
         return new DefaultConversionBus();
     }
 
+    @SuppressWarnings("MissingJavaDocMethod")
     boolean canConvert(@NotNull Type sourceType, @NotNull Type targetType);
 
+    @SuppressWarnings("MissingJavaDocMethod")
     default boolean canConvert(@NotNull TypeToken<?> sourceTypeToken, @NotNull TypeToken<?> targetTypeToken) {
         return this.canConvert(sourceTypeToken.getType(), targetTypeToken.getType());
     }
 
+    @SuppressWarnings("MissingJavaDocMethod")
     @NotNull Object convert(@NotNull Object source, @NotNull Type sourceType, @NotNull Type targetType) throws ConversionException;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "MissingJavaDocMethod"})
     default <T> @NotNull T convert(@NotNull Object source, @NotNull Class<T> targetType) throws ConversionException {
         return (T) this.convert(source, source.getClass(), targetType);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "MissingJavaDocMethod"})
     default <T, U> @NotNull T convert(@NotNull U source, @NotNull TypeToken<U> sourceTypeToken, @NotNull TypeToken<T> targetTypeToken)
         throws ConversionException {
         return (T) this.convert(source, sourceTypeToken.getType(), targetTypeToken.getType());

@@ -16,36 +16,39 @@
 
 package org.aero.conversion.converter;
 
+import org.aero.conversion.exception.ConversionException;
+import org.aero.conversion.exception.ConversionFailedException;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import org.aero.conversion.exception.ConversionFailedException;
-import org.aero.conversion.exception.ConversionException;
-import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("MissingJavaDocType")
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
-	@Override
-	public <T extends Number> Converter<String, T> create(Class<T> targetType) {
-		return new StringToNumber<>(targetType);
-	}
+    @Override
+    public <T extends Number> Converter<String, T> create(final Class<T> targetType) {
+        return new StringToNumber<>(targetType);
+    }
 
-	@SuppressWarnings("ClassCanBeRecord")
+    @SuppressWarnings("ClassCanBeRecord")
     private static final class StringToNumber<T extends Number> implements Converter<String, T> {
 
-		private final Class<T> targetType;
+        private final Class<T> targetType;
 
-		public StringToNumber(Class<T> targetType) {
-			this.targetType = targetType;
-		}
+        private StringToNumber(final Class<T> targetType) {
+            this.targetType = targetType;
+        }
 
-		@SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
         @Override
-		public @NotNull T convert(@NotNull String source, @NotNull Type sourceType, @NotNull Type targetType) throws ConversionException {
-			if (source.isEmpty()) {
-				throw new ConversionFailedException(sourceType, targetType);
-			}
-            String trimmed = source.trim();
+        public @NotNull T convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType)
+            throws ConversionException {
+            if (source.isEmpty()) {
+                throw new ConversionFailedException(sourceType, targetType);
+            }
+            final String trimmed = source.trim();
 
             if (Byte.class == this.targetType) {
                 return (T) Byte.valueOf(trimmed);
@@ -66,6 +69,6 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             }
 
             throw new ConversionFailedException(sourceType, targetType);
-		}
-	}
+        }
+    }
 }

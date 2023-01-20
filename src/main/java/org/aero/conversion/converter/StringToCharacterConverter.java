@@ -16,15 +16,17 @@
 
 package org.aero.conversion.converter;
 
-import java.lang.reflect.Type;
 import org.aero.conversion.exception.ConversionException;
 import org.aero.conversion.exception.ConversionFailedException;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
 public class StringToCharacterConverter implements Converter<String, Character> {
 
     @Override
-    public @NotNull Character convert(@NotNull String source, @NotNull Type sourceType, @NotNull Type targetType)
+    public @NotNull Character convert(@NotNull final String source, @NotNull final Type sourceType, @NotNull final Type targetType)
         throws ConversionException {
         if (source.isEmpty()) {
             throw new ConversionFailedException(sourceType, targetType);

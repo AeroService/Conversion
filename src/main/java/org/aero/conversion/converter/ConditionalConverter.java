@@ -16,6 +16,7 @@
 
 package org.aero.conversion.converter;
 
+@SuppressWarnings("MissingJavaDocType")
 public interface ConditionalConverter<T, U> extends Converter<T, U>, ConverterCondition {
 
 }
