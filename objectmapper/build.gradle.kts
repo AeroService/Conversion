@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
-    }
+plugins {
+    alias(libs.plugins.shadow)
 }
 
-rootProject.name = "Conversion"
+tasks.withType<ShadowJar> {
+    archiveFileName.set("conversion-objectmapper.jar")
+    archiveVersion.set(null as String?)
 
-include(
-        ":core",
-        ":objectmapper"
-)
+    // drop unused classes which are making the jar bigger
+    minimize()
+}
+
+dependencies {
+    "implementation"(projects.core)
+}
