@@ -30,28 +30,27 @@ public class ObjectMapperException extends ConversionException {
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    public ObjectMapperException(String message) {
+    public ObjectMapperException(final String message) {
         super(message);
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    public ObjectMapperException(Throwable cause) {
+    public ObjectMapperException(final Throwable cause) {
         super(cause);
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    public ObjectMapperException(@Nullable Type expectedType, String message) {
+    public ObjectMapperException(@Nullable final Type expectedType, final String message) {
         super(expectedType, message);
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    public ObjectMapperException(@Nullable Type expectedType, Throwable cause) {
+    public ObjectMapperException(@Nullable final Type expectedType, final Throwable cause) {
         super(expectedType, cause);
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    public ObjectMapperException(@Nullable Type expectedType, String message,
-        Throwable cause) {
+    public ObjectMapperException(@Nullable final Type expectedType, final String message, final Throwable cause) {
         super(expectedType, message, cause);
     }
 }
