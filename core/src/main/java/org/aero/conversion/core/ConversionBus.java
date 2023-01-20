@@ -19,11 +19,10 @@ package org.aero.conversion.core;
 import io.leangen.geantyref.TypeToken;
 import org.aero.conversion.core.exception.ConversionException;
 import org.aero.conversion.core.exception.ConverterNotFoundException;
+import org.aero.conversion.core.util.ConversionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Map;
 
 @SuppressWarnings("MissingJavaDocType")
 public sealed interface ConversionBus extends ConverterRegistry permits ConversionBusImpl {
@@ -62,18 +61,18 @@ public sealed interface ConversionBus extends ConverterRegistry permits Conversi
 
     @SuppressWarnings("MissingJavaDocMethod")
     default @NotNull Object convertToObject(@NotNull final Object source) throws ConversionException {
-        final Class<?> type = source.getClass();
+        final Class<?> sourceType = source.getClass();
 
-        if (this.canConvert(type, Boolean.class)) {
-            return this.convert(source, Boolean.class);
-        } else if (this.canConvert(type, Integer.class)) {
-            return this.convert(source, Integer.class);
-        } else if (this.canConvert(type, String.class)) {
-            return this.convert(source, String.class);
-        } else if (this.canConvert(type, Map.class)) {
-            return this.convert(source, Map.class);
-        } else if (this.canConvert(type, Collection.class)) {
-            return this.convert(source, Collection.class);
+        for (final Class<?> targetType : ConversionUtil.OBJECT_TYPES) {
+            if (!this.canConvert(sourceType, targetType)) {
+                continue;
+            }
+
+            try {
+                return this.convert(source, targetType);
+            } catch (ConversionException ignored) {
+                System.out.println("failed");
+            }
         }
 
         throw new ConverterNotFoundException(source.getClass());

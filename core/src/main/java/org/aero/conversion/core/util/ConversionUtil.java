@@ -19,8 +19,16 @@ package org.aero.conversion.core.util;
 import org.aero.common.core.validate.Check;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 @SuppressWarnings("MissingJavaDocType")
 public final class ConversionUtil {
+
+    @SuppressWarnings("JavaDocVariable")
+    public static final List<Class<?>> OBJECT_TYPES = List.of(Boolean.class, Short.class, Integer.class, Long.class, String.class, Map.class,
+        Collection.class);
 
     private ConversionUtil() {
         throw new UnsupportedOperationException();
