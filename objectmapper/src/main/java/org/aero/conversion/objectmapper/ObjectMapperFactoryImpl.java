@@ -81,7 +81,7 @@ final class ObjectMapperFactoryImpl implements ObjectMapper.Factory {
             return null;
         }
 
-        return new ObjectMapperImpl<>(type, result.fieldInfos(), result.instanceFactory(), this.conversionBus);
+        return new ObjectMapperImpl<>(type, result.mappingFields(), result.instanceFactory(), this.conversionBus);
     }
 
     static final class BuilderImpl implements ObjectMapper.Factory.Builder {

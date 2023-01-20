@@ -47,7 +47,7 @@ public interface FieldDiscoverer<T> {
     interface Result<T, U> {
 
         @SuppressWarnings("MissingJavaDocMethod")
-        @NotNull List<MappingField<T, U>> fieldInfos();
+        @NotNull List<MappingField<T, U>> mappingFields();
 
         @SuppressWarnings("MissingJavaDocMethod")
         @NotNull InstanceFactory<U> instanceFactory();
