@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.converter;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+
+@SuppressWarnings({"rawtypes", "MissingJavaDocType"}) //TODO: Change
+public class EnumToIntegerConverter implements Converter<Enum, Integer> {
+
+    @Override
+    public @NotNull Integer convert(@NotNull final Enum source, @NotNull final Type sourceType, @NotNull final Type targetType) {
+        return source.ordinal();
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)

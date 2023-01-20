@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
+package org.aero.conversion.core.exception;
 
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        gradlePluginPortal()
+import java.lang.reflect.Type;
+
+@SuppressWarnings("MissingJavaDocType")
+public class ConverterNotFoundException extends ConversionException {
+
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ConverterNotFoundException(final Type sourceType, final Type targetType) {
+        super("Failed to find converter which converts the source value of type " + sourceType.getTypeName()
+            + " to target value of type " + targetType.getTypeName());
     }
 }
-
-rootProject.name = "Conversion"
-
-include(
-        ":core"
-)
