@@ -47,11 +47,12 @@ subprojects {
     apply(plugin = "com.diffplug.spotless")
 
     dependencies {
+        "api"(rootProject.libs.geantyref)
+
         "implementation"(rootProject.libs.annotations)
         "implementation"(rootProject.libs.slf4j)
 
         "implementation"(rootProject.libs.common)
-        "implementation"(rootProject.libs.geantyref)
 
         "testImplementation"(rootProject.libs.bundles.junit)
         "testImplementation"(rootProject.libs.bundles.mockito)
