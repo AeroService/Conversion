@@ -37,67 +37,65 @@ allprojects {
     }
 }
 
-subprojects {
-    apply(plugin = "maven-publish")
+apply(plugin = "maven-publish")
 
-    apply(plugin = "java-library")
-    apply(plugin = "checkstyle")
-    apply(plugin = "com.diffplug.spotless")
+apply(plugin = "java-library")
+apply(plugin = "checkstyle")
+apply(plugin = "com.diffplug.spotless")
 
-    dependencies {
-        "implementation"(rootProject.libs.annotations)
-        "implementation"(rootProject.libs.slf4j)
+dependencies {
+    "implementation"(rootProject.libs.annotations)
+    "implementation"(rootProject.libs.slf4j)
 
-        "implementation"(rootProject.libs.common)
-        "implementation"(rootProject.libs.geantyref)
+    "implementation"(rootProject.libs.common)
+    "implementation"(rootProject.libs.geantyref)
 
-        "testImplementation"(rootProject.libs.bundles.junit)
-        "testImplementation"(rootProject.libs.bundles.mockito)
-    }
-
-    tasks.withType<Jar> {
-        from(rootProject.file("LICENSE"))
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        testLogging {
-            events("started", "passed", "skipped", "failed")
-        }
-        systemProperties(System.getProperties().mapKeys { it.key.toString() })
-    }
-
-    tasks.withType<JavaCompile> {
-        sourceCompatibility = JavaVersion.VERSION_17.toString()
-        targetCompatibility = JavaVersion.VERSION_17.toString()
-        options.encoding = "UTF-8"
-        options.isIncremental = true
-
-    }
-
-    tasks.withType<Checkstyle> {
-        maxErrors = 0
-        maxWarnings = 0
-        configFile = rootProject.file("checkstyle.xml")
-    }
-
-    extensions.configure<CheckstyleExtension> {
-        toolVersion = "10.3.4"
-    }
-
-    tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
-        archiveClassifier.set("javadoc")
-        from(tasks.getByName("javadoc"))
-    }
-
-    tasks.register<org.gradle.jvm.tasks.Jar>("sourcesJar") {
-        archiveClassifier.set("sources")
-        from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
-    }
-
-    configurePublishing("java", true)
+    "testImplementation"(rootProject.libs.bundles.junit)
+    "testImplementation"(rootProject.libs.bundles.mockito)
 }
+
+tasks.withType<Jar> {
+    from(rootProject.file("LICENSE"))
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        events("started", "passed", "skipped", "failed")
+    }
+    systemProperties(System.getProperties().mapKeys { it.key.toString() })
+}
+
+tasks.withType<JavaCompile> {
+    sourceCompatibility = JavaVersion.VERSION_17.toString()
+    targetCompatibility = JavaVersion.VERSION_17.toString()
+    options.encoding = "UTF-8"
+    options.isIncremental = true
+
+}
+
+tasks.withType<Checkstyle> {
+    maxErrors = 0
+    maxWarnings = 0
+    configFile = rootProject.file("checkstyle.xml")
+}
+
+extensions.configure<CheckstyleExtension> {
+    toolVersion = "10.3.4"
+}
+
+tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+    from(tasks.getByName("javadoc"))
+}
+
+tasks.register<org.gradle.jvm.tasks.Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
+}
+
+configurePublishing("java", true)
 
 extensions.configure<NexusPublishExtension> {
     repositories {
@@ -105,8 +103,8 @@ extensions.configure<NexusPublishExtension> {
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
 
-            username.set(java.lang.System.getenv("SONATYPE_USER"))
-            password.set(java.lang.System.getenv("SONATYPE_TOKEN"))
+            username.set(System.getenv("SONATYPE_USER"))
+            password.set(System.getenv("SONATYPE_TOKEN"))
         }
     }
 
