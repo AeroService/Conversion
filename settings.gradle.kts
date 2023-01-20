@@ -29,5 +29,5 @@ rootProject.name = "Conversion"
 
 include(
         ":core",
-        ":objectmapper"
+        ":object-mapper"
 )
