@@ -33,7 +33,7 @@ public class CharacterToNumberFactory implements ConverterFactory<Character, Num
     }
 
     @Override
-    public <T extends Number> Converter<Character, T> create(final Class<T> targetType) {
+    public @NotNull <T extends Number> Converter<Character, T> create(final Class<T> targetType) {
         return new CharacterToNumber<>(this.conversionBus, targetType);
     }
 

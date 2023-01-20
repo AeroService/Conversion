@@ -18,6 +18,8 @@ package org.aero.conversion.core;
 
 import io.leangen.geantyref.TypeToken;
 import org.aero.conversion.core.exception.ConversionException;
+import org.aero.conversion.core.exception.ConverterNotFoundException;
+import org.aero.conversion.core.util.ConversionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -55,5 +57,24 @@ public sealed interface ConversionBus extends ConverterRegistry permits Conversi
     default <T, U> @NotNull T convert(@NotNull U source, @NotNull TypeToken<U> sourceTypeToken, @NotNull TypeToken<T> targetTypeToken)
         throws ConversionException {
         return (T) this.convert(source, sourceTypeToken.getType(), targetTypeToken.getType());
+    }
+
+    @SuppressWarnings("MissingJavaDocMethod")
+    default @NotNull Object convertToObject(@NotNull final Object source) throws ConversionException {
+        final Class<?> sourceType = source.getClass();
+
+        for (final Class<?> targetType : ConversionUtil.OBJECT_TYPES) {
+            if (!this.canConvert(sourceType, targetType)) {
+                continue;
+            }
+
+            try {
+                return this.convert(source, targetType);
+            } catch (ConversionException ignored) {
+                System.out.println("failed");
+            }
+        }
+
+        throw new ConverterNotFoundException(source.getClass());
     }
 }

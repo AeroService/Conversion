@@ -23,11 +23,11 @@ public class ConversionFailedException extends ConversionException {
 
     @SuppressWarnings("MissingJavaDocMethod")
     public ConversionFailedException(final Type sourceType, final Type targetType) {
-        super("Failed to convert input value of type [" + sourceType.getTypeName() + "] to [" + targetType.getTypeName() + "]");
+        super(targetType, "Failed to convert input value of type [" + sourceType.getTypeName() + "] to [" + targetType.getTypeName() + "]");
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
-    public ConversionFailedException(final Type target, final Object inputValue, final String typeDescription) {
-        super(target, "Failed to convert input value of type " + inputValue.getClass() + " to " + typeDescription);
+    public ConversionFailedException(final Type sourceType, final Type targetType, final Throwable cause) {
+        super(targetType, "Failed to convert input value of type [" + sourceType.getTypeName() + "] to [" + targetType.getTypeName() + "]", cause);
     }
 }

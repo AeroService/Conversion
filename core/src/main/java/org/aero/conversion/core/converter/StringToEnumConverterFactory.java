@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
 public class StringToEnumConverterFactory implements ConverterFactory<String, Enum> {
 
     @Override
-    public <T extends Enum> Converter<String, T> create(final Class<T> targetType) {
+    public @NotNull <T extends Enum> Converter<String, T> create(final Class<T> targetType) {
         return new StringToEnum(ConversionUtil.enumType(targetType));
     }
 

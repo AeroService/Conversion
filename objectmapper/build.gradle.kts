@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.core.converter;
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-import org.aero.conversion.core.exception.ConversionException;
-import org.jetbrains.annotations.NotNull;
+plugins {
+    alias(libs.plugins.shadow)
+}
 
-@SuppressWarnings("MissingJavaDocType")
-@FunctionalInterface
-public interface ConverterFactory<T, U> {
+tasks.withType<ShadowJar> {
+    archiveFileName.set("conversion-objectmapper.jar")
+    archiveVersion.set(null as String?)
 
-    @SuppressWarnings("MissingJavaDocMethod")
-    @NotNull <V extends U> Converter<T, V> create(Class<V> type) throws ConversionException;
+    // drop unused classes which are making the jar bigger
+    minimize()
+}
 
+dependencies {
+    "implementation"(projects.core)
 }
