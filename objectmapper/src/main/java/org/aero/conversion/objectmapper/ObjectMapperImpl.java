@@ -21,6 +21,8 @@ import org.aero.common.core.function.ThrowableFunction;
 import org.aero.common.core.validate.Check;
 import org.aero.conversion.core.ConversionBus;
 import org.aero.conversion.core.exception.ConversionException;
+import org.aero.conversion.objectmapper.discoverer.FieldDiscoverer;
+import org.aero.conversion.objectmapper.exception.ObjectMapperException;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -33,15 +35,15 @@ import java.util.Map;
 final class ObjectMapperImpl<T, U> implements ObjectMapper<T> {
 
     private final Type type;
-    private final List<MappingField<T, U>> fields;
+    private final List<FieldDiscoverer.FieldData<T, U>> fieldData;
     private final FieldDiscoverer.InstanceFactory<U> instanceFactory;
     private final ConversionBus conversionBus;
 
-    ObjectMapperImpl(final Type type, final List<MappingField<T, U>> fields, final FieldDiscoverer.InstanceFactory<U> instanceFactory,
+    ObjectMapperImpl(final Type type, final List<FieldDiscoverer.FieldData<T, U>> fieldData, final FieldDiscoverer.InstanceFactory<U> instanceFactory,
         final ConversionBus conversionBus
     ) {
         this.type = type;
-        this.fields = Collections.unmodifiableList(fields);
+        this.fieldData = Collections.unmodifiableList(fieldData);
         this.instanceFactory = instanceFactory;
         this.conversionBus = conversionBus;
     }
@@ -65,7 +67,7 @@ final class ObjectMapperImpl<T, U> implements ObjectMapper<T> {
     private T load(final Map<String, Object> source, final ThrowableFunction<U, T, ConversionException> completer) throws ConversionException {
         final U fieldData = this.instanceFactory.begin();
 
-        for (final MappingField<T, U> field : this.fields) {
+        for (final FieldDiscoverer.FieldData<T, U> field : this.fieldData) {
             final Object mapValue = source.get(field.name());
 
             if (mapValue == null) {
@@ -77,7 +79,7 @@ final class ObjectMapperImpl<T, U> implements ObjectMapper<T> {
             final Object fieldValue = this.conversionBus.convert(mapValue, mapValue.getClass(), fieldType);
 
             if (!erasedBoxedType.isInstance(fieldValue)) {
-                throw new ConversionException("Object " + fieldValue + " is not of expected type " + fieldType);
+                throw new ObjectMapperException("Object " + fieldValue + " is not of expected type " + fieldType);
             }
 
             field.deserializer().accept(fieldData, fieldValue);
@@ -99,20 +101,20 @@ final class ObjectMapperImpl<T, U> implements ObjectMapper<T> {
     public void save(@NotNull final Map<String, Object> target, @NotNull final T value) throws ConversionException {
         Check.notNull(target, "target");
         Check.notNull(value, "value");
-        for (final MappingField<T, U> field : this.fields) {
+        for (final FieldDiscoverer.FieldData<T, U> fieldData : this.fieldData) {
             try {
-                final Object fieldValue = field.serializer().apply(value);
+                final Object fieldValue = fieldData.serializer().apply(value);
 
                 if (fieldValue == null) {
-                    target.put(field.name(), null);
+                    target.put(fieldData.name(), null);
                     continue;
                 }
 
                 final Object mapValue = this.conversionBus.convertToObject(fieldValue);
 
-                target.put(field.name(), mapValue);
+                target.put(fieldData.name(), mapValue);
             } catch (final IllegalAccessException e) {
-                throw new ConversionException(field.type(), e);
+                throw new ObjectMapperException(fieldData.type(), e);
             }
         }
     }

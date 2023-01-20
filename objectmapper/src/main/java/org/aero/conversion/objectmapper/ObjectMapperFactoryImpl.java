@@ -20,6 +20,9 @@ import io.leangen.geantyref.GenericTypeReflector;
 import org.aero.common.core.validate.Check;
 import org.aero.conversion.core.ConversionBus;
 import org.aero.conversion.core.exception.ConversionException;
+import org.aero.conversion.objectmapper.discoverer.FieldDiscoverer;
+import org.aero.conversion.objectmapper.exception.ObjectMapperException;
+import org.aero.conversion.objectmapper.exception.ObjectMapperNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -52,7 +55,7 @@ final class ObjectMapperFactoryImpl implements ObjectMapper.Factory {
     public @NotNull ObjectMapper<?> get(@NotNull final Type type) throws ConversionException {
         Check.notNull(type, "type");
         if (GenericTypeReflector.isMissingTypeParameters(type)) {
-            throw new ConversionException(type, "Raw types are not supported!");
+            throw new ObjectMapperException(type, "Raw types are not supported!");
         }
 
         synchronized (this.mappers) {
@@ -70,7 +73,7 @@ final class ObjectMapperFactoryImpl implements ObjectMapper.Factory {
                 }
             }
 
-            throw new ConversionException(type, "Could not find factory for type " + type);
+            throw new ObjectMapperNotFoundException(type);
         }
     }
 
@@ -81,7 +84,7 @@ final class ObjectMapperFactoryImpl implements ObjectMapper.Factory {
             return null;
         }
 
-        return new ObjectMapperImpl<>(type, result.mappingFields(), result.instanceFactory(), this.conversionBus);
+        return new ObjectMapperImpl<>(type, result.fieldData(), result.instanceFactory(), this.conversionBus);
     }
 
     static final class BuilderImpl implements ObjectMapper.Factory.Builder {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 NatroxMC
+ * Copyright 2020-2023 AeroService
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.objectmapper;
+package org.aero.conversion.objectmapper.discoverer;
 
 import io.leangen.geantyref.GenericTypeReflector;
 import org.aero.common.core.function.ThrowableFunction;
@@ -59,7 +59,7 @@ final class ObjectFieldDiscoverer implements FieldDiscoverer<Map<Field, Object>>
             return null;
         }
 
-        final List<MappingField<U, Map<Field, Object>>> mappingFields = new ArrayList<>();
+        final List<FieldData<U, Map<Field, Object>>> fields = new ArrayList<>();
         Type collectType = targetType;
         Class<?> collectClass = erasedTargetType;
         while (true) {
@@ -70,7 +70,7 @@ final class ObjectFieldDiscoverer implements FieldDiscoverer<Map<Field, Object>>
 
                 field.setAccessible(true);
                 final Type fieldType = GenericTypeReflector.getFieldType(field, collectType);
-                mappingFields.add(new MappingField<>(
+                fields.add(new FieldData<>(
                     field.getName(),
                     fieldType,
                     (intermediate, value) -> intermediate.put(field, value),
@@ -85,7 +85,7 @@ final class ObjectFieldDiscoverer implements FieldDiscoverer<Map<Field, Object>>
             collectType = GenericTypeReflector.getExactSuperType(collectType, collectClass);
         }
 
-        return new FieldDiscovererResultImpl<>(mappingFields, new InstanceFactory<>() {
+        return new Result<>(fields, new InstanceFactory<>() {
             @Override
             public Map<Field, Object> begin() {
                 return new HashMap<>();

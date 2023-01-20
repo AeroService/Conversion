@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 NatroxMC
+ * Copyright 2020-2023 AeroService
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.objectmapper;
-
-import org.aero.common.core.function.ThrowableFunction;
+package org.aero.conversion.objectmapper.exception;
 
 import java.lang.reflect.Type;
-import java.util.function.BiConsumer;
 
-record MappingField<T, U>(String name, Type type, Deserializer<U> deserializer, Serializer<T> serializer) {
+@SuppressWarnings("MissingJavaDocType")
+public class ObjectMapperNotFoundException extends ObjectMapperException {
 
-    public interface Deserializer<T> extends BiConsumer<T, Object> {
-
-    }
-
-    interface Serializer<T> extends ThrowableFunction<T, Object, IllegalAccessException> {
-
+    @SuppressWarnings("MissingJavaDocMethod")
+    public ObjectMapperNotFoundException(final Type sourceType) {
+        super(sourceType, "Failed to find object mapper which maps the value of type " + sourceType.getTypeName());
     }
 }

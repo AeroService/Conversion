@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 NatroxMC
+ * Copyright 2020-2023 AeroService
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.aero.conversion.objectmapper;
+package org.aero.conversion.objectmapper.discoverer;
 
 import org.aero.common.core.function.ThrowableFunction;
 import org.aero.common.core.validate.Check;
@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("MissingJavaDocType")
@@ -40,19 +41,7 @@ public interface FieldDiscoverer<T> {
         return new ObjectFieldDiscoverer(instanceFactory, true);
     }
 
-    @SuppressWarnings("MissingJavaDocMethod")
-    <U> @Nullable Result<U, T> discover(@NotNull Type target) throws ConversionException;
-
-    @SuppressWarnings("MissingJavaDocType")
-    interface Result<T, U> {
-
-        @SuppressWarnings("MissingJavaDocMethod")
-        @NotNull List<MappingField<T, U>> mappingFields();
-
-        @SuppressWarnings("MissingJavaDocMethod")
-        @NotNull InstanceFactory<U> instanceFactory();
-
-    }
+    @SuppressWarnings("MissingJavaDocMethod") <U> @Nullable Result<U, T> discover(@NotNull Type target) throws ConversionException;
 
     @SuppressWarnings("MissingJavaDocType")
     interface InstanceFactory<T> {
@@ -66,5 +55,24 @@ public interface FieldDiscoverer<T> {
         @SuppressWarnings("MissingJavaDocMethod")
         Object complete(T intermediate) throws ConversionException;
 
+    }
+
+    @SuppressWarnings("MissingJavaDocType")
+    record Result<T, U>(List<FieldData<T, U>> fieldData, FieldDiscoverer.InstanceFactory<U> instanceFactory) {
+
+    }
+
+    @SuppressWarnings("MissingJavaDocType")
+    record FieldData<T, U>(String name, Type type, Deserializer<U> deserializer, FieldData.Serializer<T> serializer) {
+
+        @SuppressWarnings("MissingJavaDocType")
+        public interface Deserializer<T> extends BiConsumer<T, Object> {
+
+        }
+
+        @SuppressWarnings("MissigJavaDocType")
+        public interface Serializer<T> extends ThrowableFunction<T, Object, IllegalAccessException> {
+
+        }
     }
 }

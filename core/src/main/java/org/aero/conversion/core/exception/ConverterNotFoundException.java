@@ -23,13 +23,13 @@ public class ConverterNotFoundException extends ConversionException {
 
     @SuppressWarnings("MissingJavaDocMethod")
     public ConverterNotFoundException(final Type sourceType, final Type targetType) {
-        super("Failed to find converter which converts the source value of type " + sourceType.getTypeName()
+        super(sourceType, "Failed to find converter which converts the source value of type " + sourceType.getTypeName()
             + " to target value of type " + targetType.getTypeName());
     }
 
     @SuppressWarnings("MissingJavaDocMethod")
     public ConverterNotFoundException(final Type sourceType) {
-        super("Failed to find converter which converts the source value of type " + sourceType.getTypeName()
+        super(sourceType, "Failed to find converter which converts the source value of type " + sourceType.getTypeName()
             + " to any correct target type");
     }
 }
