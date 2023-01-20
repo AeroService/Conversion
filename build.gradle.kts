@@ -14,60 +14,100 @@
  * limitations under the License.
  */
 
+import io.github.gradlenexus.publishplugin.NexusPublishExtension
+
 plugins {
-    id("java")
-    id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.nexusPublish)
 }
 
-defaultTasks("build", "shadowJar")
+defaultTasks("build", "test", "shadowJar")
 
 allprojects {
-    group = "org.aero"
-    version = "1.0.0"
+    group = "org.aero.conversion"
+    version = "1.0.0-SNAPSHOT"
     description = "A library to coerce an input value to another type"
-
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    apply(plugin = "com.github.johnrengelman.shadow")
 
     repositories {
         mavenCentral()
-        maven(url = "https://jitpack.io")
+
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
+}
+
+subprojects {
+    apply(plugin = "maven-publish")
+
+    apply(plugin = "java-library")
+    apply(plugin = "checkstyle")
+    apply(plugin = "com.diffplug.spotless")
 
     dependencies {
-        implementation("com.github.conelux:Common:6ce6fc4dae")
+        "implementation"(rootProject.libs.annotations)
+        "implementation"(rootProject.libs.slf4j)
 
-        implementation("org.jetbrains:annotations:23.0.0")
-        implementation("io.leangen.geantyref:geantyref:1.3.13")
+        "implementation"(rootProject.libs.common)
+        "implementation"(rootProject.libs.geantyref)
 
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.9.1")
-        testImplementation("org.junit.platform:junit-platform-suite-api:1.9.1")
-        testRuntimeOnly("org.junit.platform:junit-platform-suite-engine:1.9.1")
+        "testImplementation"(rootProject.libs.bundles.junit)
+        "testImplementation"(rootProject.libs.bundles.mockito)
     }
+
+    tasks.withType<Jar> {
+        from(rootProject.file("LICENSE"))
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        testLogging {
+            events("started", "passed", "skipped", "failed")
+        }
+        systemProperties(System.getProperties().mapKeys { it.key.toString() })
+    }
+
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+        options.encoding = "UTF-8"
+        options.isIncremental = true
+
+    }
+
+    tasks.withType<Checkstyle> {
+        maxErrors = 0
+        maxWarnings = 0
+        configFile = rootProject.file("checkstyle.xml")
+    }
+
+    extensions.configure<CheckstyleExtension> {
+        toolVersion = "10.3.4"
+    }
+
+    tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
+        archiveClassifier.set("javadoc")
+        from(tasks.getByName("javadoc"))
+    }
+
+    tasks.register<org.gradle.jvm.tasks.Jar>("sourcesJar") {
+        archiveClassifier.set("sources")
+        from(project.the<JavaPluginExtension>().sourceSets["main"].allJava)
+    }
+
+    //configurePublishing("java", true)
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
+extensions.configure<NexusPublishExtension> {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
 
-tasks.withType<JavaCompile> {
-    sourceCompatibility = JavaVersion.VERSION_17.toString()
-    targetCompatibility = JavaVersion.VERSION_17.toString()
-    options.encoding = "UTF-8"
-    options.isIncremental = true
-
-}
-
-publishing {
-    publications {
-        create<MavenPublication>(project.name) {
-            artifact(tasks["shadowJar"])
-            project.shadow.component(this)
+            username.set(java.lang.System.getenv("SONATYPE_USER"))
+            password.set(java.lang.System.getenv("SONATYPE_TOKEN"))
         }
     }
+
+    useStaging.set(!rootProject.version.toString().endsWith("-SNAPSHOT"))
 }
