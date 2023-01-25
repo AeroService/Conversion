@@ -40,6 +40,10 @@ import java.util.UUID;
 non-sealed class DefaultConversionBus extends ConversionBusImpl {
 
     DefaultConversionBus() {
+        this.register();
+    }
+
+    protected void register() {
         // -> Number
         this.register(String.class, Number.class, new StringToNumberConverterFactory());
         this.register(Character.class, Number.class, new CharacterToNumberFactory(this));

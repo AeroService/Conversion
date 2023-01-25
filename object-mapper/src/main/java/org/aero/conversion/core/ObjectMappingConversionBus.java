@@ -23,17 +23,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SuppressWarnings("MissingJavaDocType")
 public final class ObjectMappingConversionBus extends DefaultConversionBus {
 
     private ObjectMappingConversionBus() {
-        super();
+        this.register();
+    }
+
+    @SuppressWarnings("MissingJavaDocMethod")
+    public static @NotNull ConversionBus createDefault() {
+        return new ObjectMappingConversionBus();
+    }
+
+    protected void register() {
+        super.register();
 
         final ObjectMapper.Factory factory = ObjectMapper.factory();
         this.register(Object.class, Map.class, new ObjectToMapConverter(factory));
         this.register(Map.class, Object.class, new MapToObjectConverterFactory(factory));
-    }
-
-    public static @NotNull ConversionBus createDefault() {
-        return new ObjectMappingConversionBus();
     }
 }
