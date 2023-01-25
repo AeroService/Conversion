@@ -37,7 +37,7 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.UUID;
 
-final class DefaultConversionBus extends ConversionBusImpl {
+non-sealed class DefaultConversionBus extends ConversionBusImpl {
 
     DefaultConversionBus() {
         // -> Number
