@@ -16,8 +16,8 @@
 
 package org.aero.conversion.core.converter;
 
-import org.aero.conversion.core.exception.ConversionFailedException;
 import org.aero.conversion.core.exception.ConversionException;
+import org.aero.conversion.core.exception.ConversionFailedException;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;

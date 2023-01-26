@@ -33,8 +33,10 @@ class ConversionBusTest {
             final Map<String, Integer> in = new HashMap<>();
             in.put("a", 10);
 
-            final Map<String, String> res = conversionBus.convert(in, new TypeToken<Map<String, Integer>>() {},
-                new TypeToken<Map<String, String>>() {});
+            final Map<String, String> res = conversionBus.convert(in, new TypeToken<Map<String, Integer>>() {
+                },
+                new TypeToken<Map<String, String>>() {
+                });
 
             System.out.println(res);
         } catch (final ConversionException e) {

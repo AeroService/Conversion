@@ -49,7 +49,8 @@ public class MapToObjectConverterFactory implements ConverterFactory<Map, Object
             this.objectMapper = objectMapper;
         }
 
-        @Override public @NotNull T convert(@NotNull final Map source, @NotNull final Type sourceType, @NotNull final Type targetType)
+        @Override
+        public @NotNull T convert(@NotNull final Map source, @NotNull final Type sourceType, @NotNull final Type targetType)
             throws ConversionException {
             return (T) this.objectMapper.load(source);
         }

@@ -98,7 +98,8 @@ final class ObjectMapperFactoryImpl implements ObjectMapper.Factory {
             return this;
         }
 
-        @Override public @NotNull Builder conversionBus(@NotNull final ConversionBus conversionBus) {
+        @Override
+        public @NotNull Builder conversionBus(@NotNull final ConversionBus conversionBus) {
             this.conversionBus = conversionBus;
             return this;
         }
